@@ -3,5 +3,6 @@ export GOPATH=$PWD/vendor:$PWD
 export GOBIN=$PWD/bin
 export PATH=$PATH:$GOBIN
 
-# alias for tests runner
+# alias for tests runner and go build
 alias gt="ginkgo ./src/*"
+alias gbb="go build"
