@@ -1,3 +1,7 @@
+# redefine go env variables
 export GOPATH=$PWD/vendor:$PWD
 export GOBIN=$PWD/bin
 export PATH=$PATH:$GOBIN
+
+# alias for tests runner
+alias gt="ginkgo ./src/*"
