@@ -2,3 +2,4 @@ vendor/pkg
 pkg
 treacy
 bin
+vendor/src/**/.git/*
