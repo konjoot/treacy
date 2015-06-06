@@ -1,5 +1,5 @@
-vendor/pkg
+vendor/
 pkg
 treacy
 bin
-vendor/src/**/.git/*
+vendor/

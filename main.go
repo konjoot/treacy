@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	app.Start()
+	app.RunOn("8080")
 }
