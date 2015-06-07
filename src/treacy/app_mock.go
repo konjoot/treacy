@@ -3,7 +3,6 @@ package treacy
 import (
 	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/matchers"
-	// "github.com/onsi/gomega/types"
 )
 
 type EngineMock struct {
@@ -26,7 +25,6 @@ func (e *EngineMock) Port() string {
 }
 
 // BeRunning matcher
-
 func BeRunning() *isRunningMatcher {
 	return &isRunningMatcher{}
 }
