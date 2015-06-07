@@ -11,8 +11,7 @@ type EngineMock struct {
 }
 
 func (e *EngineMock) Run(port string) error {
-	e.running = true
-	e.port = port
+	e.running, e.port = true, port
 	return nil
 }
 
