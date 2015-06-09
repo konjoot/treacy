@@ -1,7 +1,7 @@
 package treacy
 
 import (
-	"fmt"
+	"github.com/gin-gonic/gin"
 )
 
 type App struct {
@@ -10,6 +10,7 @@ type App struct {
 
 type Engine interface {
 	Run(string) error
+	POST(relativePath string, handlers ...gin.HandlerFunc)
 }
 
 func (app *App) RunOn(port string) {
@@ -19,5 +20,7 @@ func (app *App) RunOn(port string) {
 }
 
 func (app *App) SetRoutes() {
-	fmt.Println("routes are set!")
+	app.Engine.POST("/boards", Creator)
 }
+
+func Creator(c *gin.Context) {}
