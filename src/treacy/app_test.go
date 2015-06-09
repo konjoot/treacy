@@ -3,6 +3,7 @@ package treacy
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "mocks"
 )
 
 var _ = Describe("App", func() {

@@ -1,4 +1,4 @@
-package treacy
+package mocks
 
 import (
 	"fmt"
@@ -9,13 +9,11 @@ import (
 	"runtime"
 )
 
-type (
-	EngineMock struct {
-		running bool
-		routes  []string
-		port    string
-	}
-)
+type EngineMock struct {
+	running bool
+	routes  []string
+	port    string
+}
 
 func (e *EngineMock) Run(port string) error {
 	e.running, e.port = true, port
@@ -25,6 +23,24 @@ func (e *EngineMock) Run(port string) error {
 func (e *EngineMock) POST(relativePath string, handlers ...gin.HandlerFunc) {
 	for _, handler := range handlers {
 		e.routes = append(e.routes, fmt.Sprintf("%s %s -> %s", "POST", relativePath, funcName(handler)))
+	}
+}
+
+func (e *EngineMock) PUT(relativePath string, handlers ...gin.HandlerFunc) {
+	for _, handler := range handlers {
+		e.routes = append(e.routes, fmt.Sprintf("%s %s -> %s", "PUT", relativePath, funcName(handler)))
+	}
+}
+
+func (e *EngineMock) GET(relativePath string, handlers ...gin.HandlerFunc) {
+	for _, handler := range handlers {
+		e.routes = append(e.routes, fmt.Sprintf("%s %s -> %s", "GET", relativePath, funcName(handler)))
+	}
+}
+
+func (e *EngineMock) DELETE(relativePath string, handlers ...gin.HandlerFunc) {
+	for _, handler := range handlers {
+		e.routes = append(e.routes, fmt.Sprintf("%s %s -> %s", "DELETE", relativePath, funcName(handler)))
 	}
 }
 
@@ -65,27 +81,27 @@ func (matcher *isRunningMatcher) NegatedFailureMessage(actual interface{}) (mess
 
 // Handle route matcher
 func Handle(method string) *routeMatcher {
-	return &routeMatcher{Method: method}
+	return &routeMatcher{method: method}
 }
 
 type routeMatcher struct {
-	Method  string
-	Path    string
-	Handler string
+	method  string
+	path    string
+	handler string
 }
 
 func (matcher *routeMatcher) On(path string) *routeMatcher {
-	matcher.Path = path
+	matcher.path = path
 	return matcher
 }
 
 func (matcher *routeMatcher) By(handler string) *routeMatcher {
-	matcher.Handler = handler
+	matcher.handler = handler
 	return matcher
 }
 
 func (matcher *routeMatcher) ToString() string {
-	return fmt.Sprintf("%s %s -> %s", matcher.Method, matcher.Path, matcher.Handler)
+	return fmt.Sprintf("%s %s -> %s", matcher.method, matcher.path, matcher.handler)
 }
 
 func (matcher *routeMatcher) Match(actual interface{}) (success bool, err error) {
