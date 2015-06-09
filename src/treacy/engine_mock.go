@@ -1,6 +1,7 @@
 package treacy
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/matchers"
@@ -11,14 +12,8 @@ import (
 type (
 	EngineMock struct {
 		running bool
-		routes  []RouteInfo
+		routes  []string
 		port    string
-	}
-
-	RouteInfo struct {
-		Method  string
-		Path    string
-		Handler string
 	}
 )
 
@@ -29,7 +24,7 @@ func (e *EngineMock) Run(port string) error {
 
 func (e *EngineMock) POST(relativePath string, handlers ...gin.HandlerFunc) {
 	for _, handler := range handlers {
-		e.routes = append(e.routes, RouteInfo{Method: "POST", Path: relativePath, Handler: funcName(handler)})
+		e.routes = append(e.routes, fmt.Sprintf("%s %s -> %s", "POST", relativePath, funcName(handler)))
 	}
 }
 
@@ -45,7 +40,7 @@ func (e *EngineMock) Port() string {
 	return e.port
 }
 
-func (e *EngineMock) Routes() []RouteInfo {
+func (e *EngineMock) Routes() []string {
 	return e.routes
 }
 
@@ -89,26 +84,19 @@ func (matcher *routeMatcher) By(handler string) *routeMatcher {
 	return matcher
 }
 
-func (matcher *routeMatcher) Expected() *RouteInfo {
-	return &RouteInfo{
-		Method:  matcher.Method,
-		Path:    matcher.Path,
-		Handler: matcher.Handler}
+func (matcher *routeMatcher) ToString() string {
+	return fmt.Sprintf("%s %s -> %s", matcher.Method, matcher.Path, matcher.Handler)
 }
 
 func (matcher *routeMatcher) Match(actual interface{}) (success bool, err error) {
-	containElementMatcher := &matchers.ContainElementMatcher{
-		Element: RouteInfo{
-			Method:  matcher.Method,
-			Path:    matcher.Path,
-			Handler: matcher.Handler}}
+	containElementMatcher := &matchers.ContainElementMatcher{Element: matcher.ToString()}
 	return (containElementMatcher).Match(actual.(*EngineMock).Routes())
 }
 
 func (matcher *routeMatcher) FailureMessage(actual interface{}) (message string) {
-	return format.Message(actual.(*EngineMock).Routes(), "to include", matcher.Expected())
+	return format.Message(actual.(*EngineMock).Routes(), "to include", matcher.ToString())
 }
 
 func (matcher *routeMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return format.Message(actual.(*EngineMock).Routes(), "not to include", matcher.Expected())
+	return format.Message(actual.(*EngineMock).Routes(), "not to include", matcher.ToString())
 }
