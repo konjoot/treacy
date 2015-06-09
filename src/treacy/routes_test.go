@@ -19,7 +19,7 @@ var _ = Describe("App", func() {
 
 	Describe("Routes", func() {
 		It("POST /boards", func() {
-			Expect(engine).To(Handle("POST").On("/boards").By(BoardsCreator))
+			Expect(engine).To(Handle("POST").On("/boards").By(Creator))
 		})
 	})
 })
