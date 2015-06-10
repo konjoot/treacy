@@ -1,4 +1,4 @@
-package treacy
+package app
 
 import "github.com/gin-gonic/gin"
 

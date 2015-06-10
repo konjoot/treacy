@@ -1,4 +1,4 @@
-package treacy
+package app
 
 func (app *App) SetRoutes() {
 	app.Engine.GET("/boards", ListGetter)

@@ -1,4 +1,4 @@
-package treacy_test
+package app_test
 
 import (
 	. "github.com/onsi/ginkgo"

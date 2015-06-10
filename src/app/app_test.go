@@ -1,4 +1,4 @@
-package treacy
+package app
 
 import (
 	. "github.com/onsi/ginkgo"

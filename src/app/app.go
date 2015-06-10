@@ -1,4 +1,4 @@
-package treacy
+package app
 
 type App struct {
 	Engine Engine
