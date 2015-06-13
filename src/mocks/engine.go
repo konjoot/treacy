@@ -3,10 +3,10 @@ package mocks
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/onsi/gomega/format"
 	"github.com/onsi/gomega/matchers"
 	"reflect"
 	"runtime"
+	"strings"
 )
 
 type EngineMock struct {
@@ -60,6 +60,17 @@ func (e *EngineMock) Routes() []string {
 	return e.routes
 }
 
+func (e *EngineMock) FmtRoutes() (s string) {
+	s += "[\n\t"
+	s += strings.Join(e.routes, "\n\t")
+	s += "\n]"
+	return
+}
+
+func (e *EngineMock) String() string {
+	return fmt.Sprintf("&EngineMock{running:\"%t\"}", e.running)
+}
+
 // BeRunning matcher
 func BeRunning() *isRunningMatcher {
 	return &isRunningMatcher{}
@@ -67,16 +78,20 @@ func BeRunning() *isRunningMatcher {
 
 type isRunningMatcher struct{}
 
-func (matcher *isRunningMatcher) Match(actual interface{}) (success bool, err error) {
+func (m *isRunningMatcher) Message() string {
+	return "to be running"
+}
+
+func (m *isRunningMatcher) Match(actual interface{}) (success bool, err error) {
 	return (&matchers.BeTrueMatcher{}).Match(actual.(*EngineMock).IsRunning())
 }
 
-func (matcher *isRunningMatcher) FailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, "to be running")
+func (m *isRunningMatcher) FailureMessage(actual interface{}) (message string) {
+	return fmt.Sprintf("Expected %s\n\t%s", actual.(*EngineMock), m.Message())
 }
 
-func (matcher *isRunningMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return format.Message(actual, "not to be running")
+func (m *isRunningMatcher) NegatedFailureMessage(actual interface{}) (message string) {
+	return fmt.Sprintf("Expected %s\n\tnot %s", actual.(*EngineMock), m.Message())
 }
 
 // Handle route matcher
@@ -90,29 +105,33 @@ type routeMatcher struct {
 	handler string
 }
 
-func (matcher *routeMatcher) On(path string) *routeMatcher {
-	matcher.path = path
-	return matcher
+func (m *routeMatcher) On(path string) *routeMatcher {
+	m.path = path
+	return m
 }
 
-func (matcher *routeMatcher) By(handler string) *routeMatcher {
-	matcher.handler = handler
-	return matcher
+func (m *routeMatcher) By(handler string) *routeMatcher {
+	m.handler = handler
+	return m
 }
 
-func (matcher *routeMatcher) ToString() string {
-	return fmt.Sprintf("%s %s -> %s", matcher.method, matcher.path, matcher.handler)
+func (m *routeMatcher) String() string {
+	return fmt.Sprintf("%s %s -> %s", m.method, m.path, m.handler)
 }
 
-func (matcher *routeMatcher) Match(actual interface{}) (success bool, err error) {
-	containElementMatcher := &matchers.ContainElementMatcher{Element: matcher.ToString()}
+func (m *routeMatcher) Message() string {
+	return fmt.Sprintf("to include \"%s\"", m)
+}
+
+func (m *routeMatcher) Match(actual interface{}) (success bool, err error) {
+	containElementMatcher := &matchers.ContainElementMatcher{Element: m.String()}
 	return (containElementMatcher).Match(actual.(*EngineMock).Routes())
 }
 
-func (matcher *routeMatcher) FailureMessage(actual interface{}) (message string) {
-	return format.Message(actual.(*EngineMock).Routes(), "to include", matcher.ToString())
+func (m *routeMatcher) FailureMessage(actual interface{}) (message string) {
+	return fmt.Sprintf("Expected %#s\n\t%s", actual.(*EngineMock).FmtRoutes(), m.Message())
 }
 
-func (matcher *routeMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return format.Message(actual.(*EngineMock).Routes(), "not to include", matcher.ToString())
+func (m *routeMatcher) NegatedFailureMessage(actual interface{}) (message string) {
+	return fmt.Sprintf("Expected %s\n\tnot %s", actual.(*EngineMock).FmtRoutes(), m.Message())
 }
