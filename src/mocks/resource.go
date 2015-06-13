@@ -57,7 +57,7 @@ func (r *ResourceMock) String() string {
 	return fmt.Sprintf("&ResourceMock{ created: %t }", r.created)
 }
 
-// BeCreatedMatcher
+// BeCreated matcher
 func BeCreated() *beCreatedMatcher {
 	return &beCreatedMatcher{}
 }
