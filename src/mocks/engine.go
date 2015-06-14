@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/onsi/gomega/matchers"
+	"github.com/onsi/gomega/types"
+	. "matchers"
 	"reflect"
 	"runtime"
 	"strings"
@@ -72,26 +74,26 @@ func (e *EngineMock) String() string {
 }
 
 // BeRunning matcher
-func BeRunning() *isRunningMatcher {
-	return &isRunningMatcher{}
+func BeRunning() *BaseMatcher {
+	return Matcher(&isRunningMatcher{})
 }
 
 type isRunningMatcher struct{}
 
-func (m *isRunningMatcher) Message() string {
+func (_ *isRunningMatcher) Matcher() types.GomegaMatcher {
+	return &matchers.BeTrueMatcher{}
+}
+
+func (_ *isRunningMatcher) Prepare(actual interface{}) interface{} {
+	return actual.(*EngineMock).IsRunning()
+}
+
+func (_ *isRunningMatcher) Format(actual interface{}) string {
+	return actual.(*EngineMock).String()
+}
+
+func (_ *isRunningMatcher) Message() string {
 	return "to be running"
-}
-
-func (m *isRunningMatcher) Match(actual interface{}) (success bool, err error) {
-	return (&matchers.BeTrueMatcher{}).Match(actual.(*EngineMock).IsRunning())
-}
-
-func (m *isRunningMatcher) FailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Expected %s\n\t%s", actual.(*EngineMock), m.Message())
-}
-
-func (m *isRunningMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Expected %s\n\tnot %s", actual.(*EngineMock), m.Message())
 }
 
 // Handle route matcher
