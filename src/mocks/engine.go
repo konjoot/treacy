@@ -96,6 +96,10 @@ func (_ *isRunningMatcher) Message() string {
 	return "to be running"
 }
 
+func (_ *isRunningMatcher) String() (s string) {
+	return
+}
+
 // Handle route matcher
 func Handle(method string) *handleMatcher {
 	return &handleMatcher{method: method}
@@ -112,28 +116,27 @@ func (m *handleMatcher) On(path string) *handleMatcher {
 	return m
 }
 
-func (m *handleMatcher) By(handler string) *handleMatcher {
+func (m *handleMatcher) By(handler string) *BaseMatcher {
 	m.handler = handler
-	return m
+	return Matcher(m)
+}
+
+func (m *handleMatcher) Matcher() types.GomegaMatcher {
+	return &matchers.ContainElementMatcher{Element: m.String()}
+}
+
+func (_ *handleMatcher) Prepare(actual interface{}) interface{} {
+	return actual.(*EngineMock).Routes()
+}
+
+func (_ *handleMatcher) Format(actual interface{}) string {
+	return actual.(*EngineMock).FmtRoutes()
 }
 
 func (m *handleMatcher) String() string {
 	return fmt.Sprintf("%s %s -> %s", m.method, m.path, m.handler)
 }
 
-func (m *handleMatcher) Message() string {
-	return fmt.Sprintf("to include \"%s\"", m)
-}
-
-func (m *handleMatcher) Match(actual interface{}) (success bool, err error) {
-	containElementMatcher := &matchers.ContainElementMatcher{Element: m.String()}
-	return (containElementMatcher).Match(actual.(*EngineMock).Routes())
-}
-
-func (m *handleMatcher) FailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Expected %#s\n\t%s", actual.(*EngineMock).FmtRoutes(), m.Message())
-}
-
-func (m *handleMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Expected %s\n\tnot %s", actual.(*EngineMock).FmtRoutes(), m.Message())
+func (_ *handleMatcher) Message() string {
+	return "to include"
 }

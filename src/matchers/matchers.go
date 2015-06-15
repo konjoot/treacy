@@ -10,6 +10,7 @@ type MatcherInterface interface {
 	Prepare(actual interface{}) interface{}
 	Format(actual interface{}) string
 	Message() string
+	String() string
 }
 
 func Matcher(m MatcherInterface) *BaseMatcher {
@@ -22,10 +23,26 @@ func (m *BaseMatcher) Match(actual interface{}) (success bool, err error) {
 	return m.Matcher().Match(m.Prepare(actual))
 }
 
-func (m *BaseMatcher) FailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Expected %s\n\t%s", m.Format(actual), m.Message())
+func (m *BaseMatcher) FailureMessage(actual interface{}) string {
+	return fmt.Sprintf(m.Template(false), m.Format(actual), m.Message())
 }
 
-func (m *BaseMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Expected %s\n\tnot %s", m.Format(actual), m.Message())
+func (m *BaseMatcher) NegatedFailureMessage(actual interface{}) string {
+	return fmt.Sprintf(m.Template(true), m.Format(actual), m.Message())
+}
+
+func (m *BaseMatcher) Template(negate bool) (s string) {
+	s = "Expected\n\t%s\n"
+
+	if negate {
+		s += "not "
+	}
+
+	s += "%s"
+
+	if str := m.String(); len(str) > 0 {
+		s += fmt.Sprintf("\n\t%s", str)
+	}
+
+	return
 }

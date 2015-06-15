@@ -3,6 +3,8 @@ package mocks
 import (
 	"fmt"
 	"github.com/onsi/gomega/matchers"
+	"github.com/onsi/gomega/types"
+	. "matchers"
 	"net/http/httptest"
 	"reflect"
 )
@@ -58,26 +60,30 @@ func (r *ResourceMock) String() string {
 }
 
 // BeCreated matcher
-func BeCreated() *beCreatedMatcher {
-	return &beCreatedMatcher{}
+func BeCreated() *BaseMatcher {
+	return Matcher(&beCreatedMatcher{})
 }
 
 type beCreatedMatcher struct{}
 
-func (m *beCreatedMatcher) Message() string {
+func (_ *beCreatedMatcher) Matcher() types.GomegaMatcher {
+	return &matchers.BeTrueMatcher{}
+}
+
+func (_ *beCreatedMatcher) Prepare(actual interface{}) interface{} {
+	return actual.(*ResourceMock).IsCreated()
+}
+
+func (_ *beCreatedMatcher) Format(actual interface{}) string {
+	return actual.(*ResourceMock).String()
+}
+
+func (_ *beCreatedMatcher) Message() string {
 	return "to be created"
 }
 
-func (m *beCreatedMatcher) Match(actual interface{}) (success bool, err error) {
-	return (&matchers.BeTrueMatcher{}).Match(actual.(*ResourceMock).IsCreated())
-}
-
-func (m *beCreatedMatcher) FailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Expected %s\n\t%s", actual.(*ResourceMock).String(), m.Message())
-}
-
-func (m *beCreatedMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Expected %s\n\tnot %s", actual.(*ResourceMock).String(), m.Message())
+func (_ *beCreatedMatcher) String() (s string) {
+	return
 }
 
 // HaveHeader matcher
@@ -90,52 +96,56 @@ type haveHeaderMatcher struct {
 	Expected string
 }
 
-func (m *haveHeaderMatcher) With(url string) *haveHeaderMatcher {
+func (m *haveHeaderMatcher) With(url string) *BaseMatcher {
 	m.Expected = url
-	return m
+	return Matcher(m)
 }
 
-func (m *haveHeaderMatcher) Header(r interface{}) string {
-	return r.(*httptest.ResponseRecorder).Header().Get(m.Name)
+func (m *haveHeaderMatcher) Matcher() types.GomegaMatcher {
+	return &matchers.EqualMatcher{Expected: m.Expected}
+}
+
+func (m *haveHeaderMatcher) Prepare(actual interface{}) interface{} {
+	return actual.(*httptest.ResponseRecorder).Header().Get(m.Name)
+}
+
+func (_ *haveHeaderMatcher) Format(actual interface{}) string {
+	return fmt.Sprintf("%#v", actual.(*httptest.ResponseRecorder).HeaderMap)
 }
 
 func (m *haveHeaderMatcher) Message() string {
-	return fmt.Sprintf("to have header \"%s\" with \"%s\"", m.Name, m.Expected)
+	return "to have header"
 }
 
-func (m *haveHeaderMatcher) Match(actual interface{}) (success bool, err error) {
-	return (&matchers.EqualMatcher{Expected: m.Expected}).Match(m.Header(actual))
-}
-
-func (m *haveHeaderMatcher) FailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Expected %#v\n\t%s", actual.(*httptest.ResponseRecorder).HeaderMap, m.Message())
-}
-
-func (m *haveHeaderMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Expected %#v\n\tnot %s", actual.(*httptest.ResponseRecorder).HeaderMap, m.Message())
+func (m *haveHeaderMatcher) String() string {
+	return fmt.Sprintf("\"%s\" with \"%s\"", m.Name, m.Expected)
 }
 
 // BindedWith matcher
-func BindedWith(expected map[string]string) *bindedWithMatcher {
-	return &bindedWithMatcher{Expected: expected}
+func BindedWith(expected map[string]string) *BaseMatcher {
+	return Matcher(&bindedWithMatcher{Expected: expected})
 }
 
 type bindedWithMatcher struct {
 	Expected map[string]string
 }
 
-func (m *bindedWithMatcher) Message() string {
-	return fmt.Sprintf("to have been binded with %#v", m.Expected)
+func (m *bindedWithMatcher) Matcher() types.GomegaMatcher {
+	return &matchers.BeTrueMatcher{}
 }
 
-func (m *bindedWithMatcher) Match(actual interface{}) (success bool, err error) {
-	return (&matchers.BeTrueMatcher{}).Match(actual.(*ResourceMock).IsBindedWith(m.Expected))
+func (m *bindedWithMatcher) Prepare(actual interface{}) interface{} {
+	return actual.(*ResourceMock).IsBindedWith(m.Expected)
 }
 
-func (m *bindedWithMatcher) FailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Expected %#v\n\t%s", actual.(*ResourceMock).Form(), m.Message())
+func (_ *bindedWithMatcher) Format(actual interface{}) string {
+	return fmt.Sprintf("%#v", actual.(*ResourceMock).Form())
 }
 
-func (m *bindedWithMatcher) NegatedFailureMessage(actual interface{}) (message string) {
-	return fmt.Sprintf("Expected %#v\n\tnot %s", actual.(*ResourceMock).Form(), m.Message())
+func (_ *bindedWithMatcher) Message() string {
+	return "to have been binded with"
+}
+
+func (m *bindedWithMatcher) String() string {
+	return fmt.Sprintf("%#v", m.Expected)
 }
