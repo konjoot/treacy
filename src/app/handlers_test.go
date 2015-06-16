@@ -31,9 +31,6 @@ var _ = Describe("Handlers", func() {
 	Describe("Creator", func() {
 		JustBeforeEach(func() {
 			router.POST("/tests", Creator)
-			router.Use(func(c *gin.Context) {
-				c.Set("resource", resource)
-			})
 			jsBody, _ := json.Marshal(body)
 			request, _ = http.NewRequest("POST", "/tests", bytes.NewBuffer(jsBody))
 			request.Header.Add("Content-Type", cType)
@@ -44,6 +41,9 @@ var _ = Describe("Handlers", func() {
 		Context("on success", func() {
 			BeforeEach(func() {
 				resource = Resource()
+				router.Use(func(c *gin.Context) {
+					c.Set("resource", resource)
+				})
 				body = map[string]string{
 					"Name": "test",
 					"Desc": "testDesc"}
