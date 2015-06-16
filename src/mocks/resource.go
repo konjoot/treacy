@@ -28,7 +28,7 @@ func (f *resourceFormMock) ValOf(name string) string {
 	return reflect.Indirect(r).FieldByName(name).String()
 }
 
-func (r *ResourceMock) Form() *resourceFormMock {
+func (r *ResourceMock) Form() interface{} {
 	return r.form
 }
 
@@ -46,9 +46,8 @@ func (r *ResourceMock) IsCreated() bool {
 }
 
 func (r *ResourceMock) IsBindedWith(m map[string]string) (ok bool) {
-	form := r.Form()
 	for key, val := range m {
-		if ok = form.ValOf(key) == val; !ok {
+		if ok = r.form.ValOf(key) == val; !ok {
 			return
 		}
 	}
