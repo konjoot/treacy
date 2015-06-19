@@ -13,7 +13,6 @@ func Creator(c *gin.Context) {
 		ri.Save()
 
 		c.Header("Location", ri.Url())
-		// c.JSON(http.StatusCreated, "")
 		c.Data(http.StatusCreated, gin.MIMEJSON, nil)
 	}
 }
