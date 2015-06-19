@@ -1,7 +1,7 @@
 package app
 
 type App struct {
-	Engine Engine
+	Engine EngineIface
 }
 
 func (app *App) RunOn(port string) {

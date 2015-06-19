@@ -3,7 +3,7 @@ package app
 import "github.com/gin-gonic/gin"
 
 type (
-	Engine interface {
+	EngineIface interface {
 		Run(string) error
 		GET(relativePath string, handlers ...gin.HandlerFunc)
 		PUT(relativePath string, handlers ...gin.HandlerFunc)

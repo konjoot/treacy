@@ -5,7 +5,7 @@ import (
 	"github.com/onsi/gomega/types"
 )
 
-type MatcherInterface interface {
+type MatcherIface interface {
 	Matcher() types.GomegaMatcher
 	Prepare(actual interface{}) interface{}
 	Format(actual interface{}) string
@@ -13,11 +13,11 @@ type MatcherInterface interface {
 	String() string
 }
 
-func Matcher(m MatcherInterface) *BaseMatcher {
+func Matcher(m MatcherIface) *BaseMatcher {
 	return &BaseMatcher{m}
 }
 
-type BaseMatcher struct{ MatcherInterface }
+type BaseMatcher struct{ MatcherIface }
 
 func (m *BaseMatcher) Match(actual interface{}) (success bool, err error) {
 	return m.Matcher().Match(m.Prepare(actual))
