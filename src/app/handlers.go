@@ -6,14 +6,16 @@ import (
 )
 
 func Creator(c *gin.Context) {
-	r, _ := c.Get("resource")
-	ri := r.(ResourceIface)
+	if r, ok := c.Get("resource"); ok {
+		ri := r.(ResourceIface)
 
-	c.Bind(ri.Form())
-	ri.Save()
+		c.Bind(ri.Form())
+		ri.Save()
 
-	c.Header("Location", ri.Url())
-	c.JSON(http.StatusCreated, "")
+		c.Header("Location", ri.Url())
+		// c.JSON(http.StatusCreated, "")
+		c.Data(http.StatusCreated, gin.MIMEJSON, nil)
+	}
 }
 
 func Getter(c *gin.Context)     {}

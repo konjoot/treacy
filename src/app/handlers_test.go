@@ -62,7 +62,7 @@ var _ = Describe("Handlers", func() {
 				Expect(response).To(HaveHeader("Location").With(resource.Url()))
 			})
 			It("should return empty body", func() {
-				Expect(response.Body.Len()).To(BeZero())
+				Expect(response.Body.String()).To(BeEmpty())
 			})
 		})
 
