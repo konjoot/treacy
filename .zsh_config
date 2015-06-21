@@ -1,0 +1,9 @@
+# redefine go env variables
+# export GOPATH=`godep path`:$GOPATH
+# export GOPATH=$GOPATH:$PWD
+# export GOBIN=`godep path`/bin
+# export PATH=$PATH:$GOBIN
+
+# alias for tests runner and go build
+alias gtt="ginkgo -r"
+alias gbb="go build"
