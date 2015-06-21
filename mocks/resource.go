@@ -2,9 +2,9 @@ package mocks
 
 import (
 	"fmt"
+	. "github.com/konjoot/treacy/matchers"
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
-	. "matchers"
 	"net/http/httptest"
 	"reflect"
 )

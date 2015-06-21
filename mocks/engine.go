@@ -3,9 +3,9 @@ package mocks
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	. "github.com/konjoot/treacy/matchers"
 	"github.com/onsi/gomega/matchers"
 	"github.com/onsi/gomega/types"
-	. "matchers"
 	"reflect"
 	"runtime"
 	"strings"

@@ -1,8 +1,8 @@
 package main
 
 import (
-	treacy "app"
 	"github.com/gin-gonic/gin"
+	treacy "github.com/konjoot/treacy/app"
 )
 
 func main() {

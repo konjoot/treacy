@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	. "github.com/konjoot/treacy/mocks"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "mocks"
 	"net/http"
 	"net/http/httptest"
 )

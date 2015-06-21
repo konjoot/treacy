@@ -1,9 +1,0 @@
-# redefine go env variables
-eval $(goop env)
-export GOPATH=$GOPATH:$PWD
-# export GOBIN=$PWD/bin
-# export PATH=$PATH:$GOBIN
-
-# alias for tests runner and go build
-alias gtt="ginkgo ./src/*"
-alias gbb="go build"

@@ -1,9 +1,9 @@
 package app
 
 import (
+	. "github.com/konjoot/treacy/mocks"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "mocks"
 )
 
 var _ = Describe("App", func() {
